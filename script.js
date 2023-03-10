@@ -7,7 +7,7 @@ const ThreeCardReading= require('./models/tarot');
 
 
 require("dotenv").config()
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
@@ -31,7 +31,7 @@ app.use(methodOverride("_method"))
 // Induces
 
 app.get('/', (req, res) => {
-  res.redirect('/threecard');
+  res.send('Hello World');
 });
 
 app.post('/threecard', async (req, res) => {
