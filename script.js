@@ -34,9 +34,6 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.post('/threecard', async (req, res) => {
-    const { question, rating } = req.body;
-
 const createThreeCardReading = async (question, rating) => {
     const cardDeck = {
         'Ace of Cups': '/public/images/Ace_of_Cups.png',
@@ -119,70 +116,77 @@ const createThreeCardReading = async (question, rating) => {
         'Wheel of Fortune': '/public/images/Wheel_of_Fortune.png' 
     };
 
-        const chooseRandomCards = (cards, count) => {
-        const shuffledCards = cards.sort(() => 0.5 - Math.random());
-        return shuffledCards.slice(0, count);
-      };
-      
-      const [pastCard, presentCard, futureCard] = chooseRandomCards(cardDeck, 3);
-      const spread = [
-        {position: 'past', card: pastCard},
-        {position: 'present', card: presentCard},
-        {position: 'future', card: futureCard}
-      ];
-    
-      // Generate readings for each card in the spread
-      const generateCardReading = async (card, position, question) => {
-        const prompt = `Tarot card reading for "${question}"\n\nThe card in the ${position} position is the ${card}.\n\nPlease give me the interpretation for the ${card} in the ${position} position.\n\n`;
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
-          body: JSON.stringify({ prompt })
-        };
-        const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', requestOptions);
-        const data = await response.json();
-        const reading = data.choices[0].text.trim();
-        return reading;
-      };
-    
-      const [pastReading, presentReading, futureReading] = await Promise.all([
-        generateCardReading(pastCard, 'past', question),
-        generateCardReading(presentCard, 'present', question),
-        generateCardReading(futureCard, 'future', question)
-      ]);
+    const chooseRandomCards = (cards, count) => {
+    const shuffledCards = cards.sort(() => 0.5 - Math.random());
+    return shuffledCards.slice(0, count);
     };
-    
-     // Generate a general reading for the spread
-const generateGeneralReading = async (question, spread) => {
-    const prompt = `Tarot card reading for "${question}"\n\nThe three cards in the spread are: ${spread[0].card}, ${spread[1].card}, and ${spread[2].card}.\n\nPlease give me a general interpretation of the reading.\n\n`;
+      
+   
+   
+    // Generate readings for each card in the spread
+    const generateCardReading = async (card, position, question) => {
+    const prompt = `Tarot card reading for "${question}"\n\nThe card in the ${position} position is the ${card}.\n\nPlease give me the interpretation for the ${card} in the ${position} position.\n\n`;
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
-      body: JSON.stringify({ prompt })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+        body: JSON.stringify({ prompt })
     };
     const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', requestOptions);
     const data = await response.json();
     const reading = data.choices[0].text.trim();
     return reading;
-  };
+    };
 
-  const generalReading = await generateGeneralReading(question, spread);
+    const [pastCard, presentCard, futureCard] = chooseRandomCards(Object.keys(cardDeck), 3);
+    const spread = [
+    {position: 'past', card: pastCard},
+    {position: 'present', card: presentCard},
+    {position: 'future', card: futureCard}
+    ];
+
+    const [pastReading, presentReading, futureReading] = await Promise.all([
+    generateCardReading(pastCard, 'past', question),
+    generateCardReading(presentCard, 'present', question),
+    generateCardReading(futureCard, 'future', question)
+    ]);
+
+    
+     // Generate a general reading for the spread
+      const generateGeneralReading = async (question, spread) => {
+        const prompt = `Tarot card reading for "${question}"\n\nThe three cards in the spread are: ${spread[0].card}, ${spread[1].card}, and ${spread[2].card}.\n\nPlease give me a general interpretation of the reading.\n\n`;
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+            body: JSON.stringify({ prompt })
+    };
+        const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', requestOptions);
+        const data = await response.json();
+        const reading = data.choices[0].text.trim();
+        return reading;
+    };
+
+    const generalReading = await generateGeneralReading(question, spread);
+    return { spread, pastCard, presentCard, futureCard, pastReading, presentReading, futureReading, generalReading };
+    };
+app.post('/threecard', async (req, res) => {
+    const { question, rating } = req.body;
+    // Call createThreeCardReading function and get the spread value from the returned object
+    const { spread, pastCard, presentCard, futureCard, pastReading, presentReading, futureReading, generalReading } = await createThreeCardReading(question, rating);
   
-  // Save the reading to the database
-  const savedReading = await ThreeCardReading.create({
-    question,
-    rating,
-    past_card: pastCard,
-    past_card_interpretation: pastReading,
-    present_card: presentCard,
-    present_card_interpretation: presentReading,
-    future_card: futureCard,
-    future_card_interpretation: futureReading,
-    general_interpretation: generalReading
+    const savedReading = await ThreeCardReading.create({
+      question,
+      rating,
+      past_card: pastCard,
+      past_card_interpretation: pastReading,
+      present_card: presentCard,
+      present_card_interpretation: presentReading,
+      future_card: futureCard,
+      future_card_interpretation: futureReading,
+      general_interpretation: generalReading
+    });
+    
+    res.status(201).json(savedReading);
   });
-  
-  res.status(201).json(savedReading);
-});
 
 app.listen(PORT, () => {
     console.log(`My flight was awful, thanks for asking ${PORT}`);
