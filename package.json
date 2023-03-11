@@ -19,6 +19,7 @@
     "mongoose": "^7.0.1",
     "node-fetch": "^3.3.1",
     "nodemon": "^2.0.21",
+    "openai": "^3.2.1",
     "pg": "^8.10.0",
     "sequelize": "^6.29.1"
   }
