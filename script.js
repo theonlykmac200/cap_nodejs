@@ -202,7 +202,7 @@ router.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-  router.put('/:_id/rating', async (req, res) => {
+  router.patch('/:_id/rating', async (req, res) => {
     const id = req.params._id;
     const rating = req.body.rating;
   
