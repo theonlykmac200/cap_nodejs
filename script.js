@@ -25,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride("_method"))
+app.use(express.static('public'));
+
 
 
 
@@ -129,10 +131,13 @@ const createThreeCardReading = async (question, rating) => {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({prompt, max_tokens: 1024})
     };
-    const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', requestOptions);
+    const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', requestOptions);
     const data = await response.json();
+    if (!data.choices || data.choices.length === 0) {
+      throw new Error('No choices found in OpenAI response');
+    }
     const reading = data.choices[0].text.trim();
     return reading;
     };
@@ -157,9 +162,9 @@ const createThreeCardReading = async (question, rating) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({ prompt, max_tokens: 1024})
     };
-        const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', requestOptions);
+        const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', requestOptions);
         const data = await response.json();
         const reading = data.choices[0].text.trim();
         return reading;
@@ -188,6 +193,6 @@ app.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-app.listen(PORT, () => {
-    console.log(`My flight was awful, thanks for asking ${PORT}`);
-});
+  app.listen(process.env.PORT, () => {
+    console.log(`My flight was aweful thanksfor asking ${process.env.PORT}`);
+  });
