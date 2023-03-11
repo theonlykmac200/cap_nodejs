@@ -29,6 +29,12 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride("_method"))
 app.use(express.static('public'));
 app.use(router)
+app.use((req, res, next) => {
+  console.log(`Incoming ${req.method} request to ${req.path}`);
+  console.log(`Request parameters: ${JSON.stringify(req.params)}`);
+  console.log(`Request body: ${JSON.stringify(req.body)}`);
+  next();
+});
 
 
 
@@ -196,7 +202,7 @@ router.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-  router.put('/:id/rating', async (req, res) => {
+  router.put('/:_id/rating', async (req, res) => {
     const id = req.params;
     const rating = req.body;
   
