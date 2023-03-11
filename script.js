@@ -5,7 +5,6 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const methodOverride = require('method-override');
 const ThreeCardReading= require('./models/tarot');
 const { Router } = require('express');
-const router = express.Router();
 
 
 require("dotenv").config()
@@ -28,8 +27,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride("_method"))
 app.use(express.static('public'));
-app.use(router)
-app.use((req, res, next) => {
+
+const router = express.Router();
+
+router.use((req, res, next) => {
   console.log(`Incoming ${req.method} request to ${req.path}`);
   console.log(`Request parameters: ${JSON.stringify(req.params)}`);
   console.log(`Request body: ${JSON.stringify(req.body)}`);
@@ -225,6 +226,7 @@ router.post('/threecard', async (req, res) => {
     res.json(updatedReading);
   });
  
+  app.use('/readings', router);
  
 
   app.listen(process.env.PORT, () => {
