@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const methodOverride = require('method-override');
 const ThreeCardReading= require('./models/tarot');
+const router = express.Router();
 
 
 require("dotenv").config()
