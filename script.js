@@ -215,7 +215,7 @@ router.post('/threecard', async (req, res) => {
       return;
     }
   
-    const updatedReading = await ThreeCardReading.findByIdAndUpdate(id=reading._id, { rating }, { new: true });
+    const updatedReading = await ThreeCardReading.findByIdAndUpdate(id, { rating }, { new: true });
 
     if (!updatedReading) {
       res.status(404).json({ error: 'Reading not found.' });
