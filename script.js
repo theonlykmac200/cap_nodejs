@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const methodOverride = require('method-override');
 const ThreeCardReading= require('./models/tarot');
+const { Router } = require('express');
 const router = express.Router();
 
 
@@ -27,13 +28,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride("_method"))
 app.use(express.static('public'));
+app.use(router)
 
 
 
 
 // Induces
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.send('Hello World');
 });
 
@@ -174,7 +176,7 @@ const createThreeCardReading = async (question, rating) => {
     const generalReading = await generateGeneralReading(question, spread);
     return { spread, pastCard, presentCard, futureCard, pastReading, presentReading, futureReading, generalReading };
     };
-app.post('/threecard', async (req, res) => {
+router.post('/threecard', async (req, res) => {
     const { question, rating } = req.body;
     // Call createThreeCardReading function and get the spread value from the returned object
     const { spread, pastCard, presentCard, futureCard, pastReading, presentReading, futureReading, generalReading } = await createThreeCardReading(question, rating);
