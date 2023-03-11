@@ -193,7 +193,7 @@ app.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-  router.put('/:_id/rating', (req, res) => {
+  router.put('/:id/rating', (req, res) => {
     const id = req.params._id;
     const rating = req.body.rating;
   
