@@ -7,7 +7,7 @@ const ThreeCardReading= require('./models/tarot');
 
 
 require("dotenv").config()
-const PORT = process.env.PORT || 3002;
+const PORT = 3002;
 
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
@@ -193,6 +193,9 @@ app.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-  app.listen(process.env.PORT, () => {
-    console.log(`My flight was aweful thanksfor asking ${process.env.PORT}`);
+ 
+ 
+
+  app.listen(3002, () => {
+    console.log(`My flight was aweful thanksfor asking 3002`);
   });
