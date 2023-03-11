@@ -193,37 +193,24 @@ app.post('/threecard', async (req, res) => {
     res.status(201).json(savedReading);
   });
 
-  router.put('/:id/rating', (req, res) => {
-    const id = req.params._id;
-    const rating = req.body.rating;
+  router.put('/:id/rating', async (req, res) => {
+    const id = req.params;
+    const rating = req.body;
   
     if (!rating || rating < 1 || rating > 5) {
       res.status(400).json({error: 'Invalid rating.'});
       return;
     }
   
-    Reading.findById(id, (err, reading) => {
-      if (err) {
-        res.status(500).json({error: 'Failed to update rating.'});
-        return;
-      }
+    const updatedReading = await ThreeCardReading.findByIdAndUpdate(id, { rating }, { new: true });
+
+    if (!updatedReading) {
+      res.status(404).json({ error: 'Reading not found.' });
+      return;
+    }
   
-      if (!reading) {
-        res.status(404).json({error: 'Reading not found.'});
-        return;
-      }
-  
-      reading.rating = rating;
-      reading.save((err, updatedReading) => {
-        if (err) {
-          res.status(500).json({error: 'Failed to update rating.'});
-          return;
-        }
-        res.json(updatedReading);
-      });
-    });
+    res.json(updatedReading);
   });
-  
  
  
 
