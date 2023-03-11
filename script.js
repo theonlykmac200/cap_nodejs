@@ -203,8 +203,8 @@ router.post('/threecard', async (req, res) => {
   });
 
   router.put('/:_id/rating', async (req, res) => {
-    const id = req.params;
-    const rating = req.body;
+    const id = req.params._id;
+    const rating = req.body.rating;
   
     if (!rating || rating < 1 || rating > 5) {
       res.status(400).json({error: 'Invalid rating.'});
