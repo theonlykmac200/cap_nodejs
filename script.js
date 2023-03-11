@@ -226,8 +226,7 @@ router.post('/threecard', async (req, res) => {
     res.json(updatedReading);
   });
  
-  app.use('/readings', router);
- 
+  
 
   app.listen(process.env.PORT, () => {
     console.log(`My flight was aweful thanks for asking ${process.env.PORT}`);
