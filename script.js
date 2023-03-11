@@ -203,8 +203,11 @@ router.post('/threecard', async (req, res) => {
   });
 
   router.put('/:id/rating', async (req, res) => {
-    console.log(req.params);
-    const id = req.params.id;
+    console.log('Incoming PUT request to /readings/:id/rating');
+    console.log('Request parameters:', req.params);
+    console.log('Request body:', req.body);
+
+    const id = req.params._id;
     const rating = req.body.rating;
   
     if (!rating || rating < 1 || rating > 5) {
