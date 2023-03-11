@@ -203,6 +203,7 @@ router.post('/threecard', async (req, res) => {
   });
 
   router.patch('/:id/rating', async (req, res) => {
+    console.log(req.params);
     const id = req.params.id;
     const rating = req.body.rating;
   
