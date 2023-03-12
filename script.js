@@ -224,6 +224,8 @@ router.post('/threecard', async (req, res) => {
   
     res.json(updatedReading);
   });
+
+ 
  
  
 
