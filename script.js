@@ -225,6 +225,23 @@ router.post('/threecard', async (req, res) => {
     res.json(updatedReading);
   });
 
+  router.delete('/readings/:id', async (req, res) => {
+    console.log('Incoming DELETE request to /readings/:id');
+    console.log('Request parameters:', req.params);
+  
+    const id = req.params.id;
+  
+    const deletedReading = await ThreeCardReading.findByIdAndDelete(id);
+  
+    if (!deletedReading) {
+      res.status(404).json({ error: 'Reading not found.' });
+      return;
+    }
+  
+    res.json({ message: 'Reading deleted successfully.' });
+  });
+  
+
  
  
  
